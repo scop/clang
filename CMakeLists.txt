@@ -363,9 +363,18 @@ if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
     PATTERN "*.h"
     )
 
-  install(PROGRAMS utils/bash-autocomplete.sh
-    DESTINATION share/clang
-    )
+  find_package(bash-completion)
+  if(BASH_COMPLETION_FOUND)
+    message(STATUS
+      "Using bash completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
+  else()
+    set (BASH_COMPLETION_COMPLETIONSDIR "/etc/bash_completion.d")
+    message (STATUS
+      "Using fallback bash completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
+  endif()
+
+  install(FILES utils/bash-autocomplete.sh DESTINATION
+    ${BASH_COMPLETION_COMPLETIONSDIR} RENAME clang)
 endif()
 
 add_definitions( -D_GNU_SOURCE )
